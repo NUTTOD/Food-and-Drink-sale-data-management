@@ -1,2 +1,16 @@
 OrderID,ProductName,Quantity,Price
-0001,Kaprow,2,50
+0001,Kaprow Moo,2,50
+0002,Khao Pad Kai,1,45
+0003,Pad Thai Goong,1,60
+0004,Tom Yum Goong,1,80
+0005,Green Curry Chicken,2,70
+0006,Iced Coffee,3,35
+0007,Thai Tea,2,30
+0008,Fried Chicken,4,40
+0009,Sticky Rice,4,10
+0010,Som Tum Thai,1,50
+0011,Massaman Curry,1,75
+0012,Pad See Ew,2,55
+0013,Spring Rolls,5,30
+0014,Mango Sticky Rice,1,60
+0015,Water,3,10

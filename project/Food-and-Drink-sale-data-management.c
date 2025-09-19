@@ -14,21 +14,30 @@ int ReadCSV (){
     FILE *CSVFile = fopen("csvfile/Food-and-Drink-sale-data-management.csv", "r");
 
     if (CSVFile == NULL){
-        printf("File %p\n", CSVFile);
-        printf("เปิดไฟล์ไม่สำเร็จ\n");
+        printf("ที่อยู่ %p\n", CSVFile);
+        printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
     }
     else{
-        printf("File %p\n", CSVFile);
+        //printf("File %p\n", CSVFile);
         printf("เปิดไฟล์สำเร็จ\n");
 
         if (fgets(buffer, sizeof(buffer), CSVFile) != NULL){
             char *header_token = strtok(buffer, ",\n");
             while (header_token != NULL){
-                printf("%-35s", header_token);
+                printf("%-31s", header_token);
                 header_token = strtok(NULL, ",\n");
             }
             printf("\n");
-            print_symbol(120, '=');
+            print_symbol(125, '=');
+        }
+        while (fgets(buffer, sizeof(buffer), CSVFile) != NULL){
+            char *token = strtok(buffer, ",\n");
+            while (token != NULL){
+                printf("|%-30s", token);
+                token = strtok(NULL, ",\n");
+            }
+            printf("|");
+            printf("\n");
         }
 
         fclose(CSVFile);
@@ -38,9 +47,10 @@ int ReadCSV (){
 
 int main(){
     int menu = 0;
+    int scan_check;
 
     while(menu != 7){
-        printf("ระบบจัดการข้อมูลการซื้ออาหารและเครื่องดื่ม\n");
+        printf("     ระบบจัดการข้อมูลการซื้ออาหารและเครื่องดื่ม\n");
         printf("------------โปรดเลือกฟังก์ชันที่ต้องการ------------\n");
         printf("1.อ่านข้อมูลการซื้อ\n");
         printf("2.บันทึกข้อมูลการซื้อ\n");
@@ -50,31 +60,46 @@ int main(){
         printf("6.ลบข้อมูลการซื้อ\n");
         printf("7.ออกจากโปรแกรม");
         printf("เลือกฟังก์ชันโดยตัวเลข 1-7 : ");
-        scanf("%d", &menu);
-        print_symbol(44, '-');
+        scan_check = scanf("%d", &menu);
 
-        switch (menu){
-            case 1: 
-                ReadCSV();
-                print_symbol(44, '-');
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            case 7:
-                printf("จบการทำงานของโปรแกรม\n");
-                break;
-            default:
-                printf("โปรดเลือกตัวเลือกที่ 1-7\n");
-                menu = 0;
+        if (scan_check == 1){
+            print_symbol(44, '-');
+            switch (menu){
+                case 1: 
+                    ReadCSV();
+                    print_symbol(125, '=');
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    printf("จบการทำงานของโปรแกรม\n");
+                    break;
+                default:
+                    printf("โปรดเลือกตัวเลือกที่ 1-7\n");
+                    menu = 0;
+                    print_symbol(44, '-');
+                    break;
+            }
+            print_symbol(3, '\n');
         }
+        else{
+            print_symbol(44, '-');
+            printf("โปรดเลือกตัวเลือกที่ 1-7\n");
+            while(getchar() != '\n');
+            menu = 0;
+            print_symbol(44, '-');
+            print_symbol(3, '\n');
+        }
+
     }
+
     return 0;
 }
