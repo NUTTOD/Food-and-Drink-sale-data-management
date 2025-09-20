@@ -8,9 +8,18 @@ void print_symbol(int length, char symbol){
     putchar('\n');
 }
 
+int SaveCSV (char *filename){
+    char path[1024] = "csvfile/";
+    char filetype[] = ".csv";
+    strcat(path, filename);
+    strcat(path, filetype);
+    FILE *CSVFile = fopen(path, "a");
+}
+
 int ReadCSV (){
     char buffer [1024];
-    FILE *CSVFile = fopen("csvfile/Food-and-Drink-sale-data-management.csv", "r");
+    char filename [] = "csvfile/Food-and-Drink-sale-data-management.csv";
+    FILE *CSVFile = fopen(filename, "r");
 
     if (CSVFile == NULL){
         printf("ที่อยู่ %p\n", CSVFile);
@@ -41,7 +50,7 @@ int ReadCSV (){
 
         fclose(CSVFile);
     }
-
+    return 1;
 }
 
 int main(){
@@ -69,6 +78,10 @@ int main(){
                     print_symbol(125, '=');
                     break;
                 case 2:
+                    char filename[1024];
+                    printf("โปรดระบุชื่อไฟล์ที่ต้องการ : ");
+                    scanf("%s", &filename);
+                    SaveCSV(filename);
                     break;
                 case 3:
                     break;
