@@ -13,7 +13,24 @@ int SaveCSV (char *filename){
     char filetype[] = ".csv";
     strcat(path, filename);
     strcat(path, filetype);
-    FILE *CSVFile = fopen(path, "a");
+
+    FILE *checkFile = fopen(path, "r");
+    if (checkFile != NULL){
+        printf("มีไฟล์ชื่อนี้อยู่แล้ว");
+        fclose(checkFile);
+    }
+    else{
+        FILE *CSVFile = fopen(path, "a");
+        if (CSVFile == NULL){
+            printf("ไม่สามารถสร้างไฟล์ได้");
+        }
+        else{
+            fprintf(CSVFile, "OrderID,ProductName,Quantity,Price");
+        }
+        fclose(CSVFile);
+        fclose(checkFile);
+    }
+
 }
 
 int ReadCSV (){
