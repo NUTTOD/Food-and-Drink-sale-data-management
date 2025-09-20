@@ -22,15 +22,16 @@ int SaveCSV (char *filename){
     else{
         FILE *CSVFile = fopen(path, "a");
         if (CSVFile == NULL){
-            printf("ไม่สามารถสร้างไฟล์ได้");
+            printf("ไม่สามารถสร้างไฟล์ได้\n");
         }
         else{
-            fprintf(CSVFile, "OrderID,ProductName,Quantity,Price");
+            printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
+            fprintf(CSVFile, "OrderID,ProductName,Quantity,Price\n");
+
         }
         fclose(CSVFile);
-        fclose(checkFile);
     }
-
+    return 1;
 }
 
 int ReadCSV (){
