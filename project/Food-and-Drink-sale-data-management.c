@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+
+#define MAXFILE 50
 
 void print_symbol(int length, char symbol){
     for (int i = 0; i < length; i++){
@@ -40,23 +43,27 @@ int ReadCSV (){
     HANDLE hFind;
     hFind = FindFirstFile("csvfile/*.*", &findData);
 
+    char buffer [1024];
+    char filename [] = "";
+    FILE *CSVFile = fopen(filename, "r");
+    char *filelist[MAXFILE];
+    int filecount = 0;
+
     if (hFind == INVALID_HANDLE_VALUE){
         printf("ไม่เจอ path หรือ error");
         return 1;
     }
     else{
-        while (FindNextFile(hFind, &findData) != 0){
-            printf("- %s\n", findData.cFileName);
-        }
+        do{
+            if (strcmp(findData.cFileName, ".") != 0 && strcmp(findData.cFileName, "..") != 0){
+                printf("- %s\n", findData.cFileName);
+            }
+        }while (FindNextFile(hFind, &findData) != 0);
         FindClose(hFind);
     }
 
-    char buffer [1024];
-    char filename [] = "csvfile/Food-and-Drink-sale-data-management.csv";
-    FILE *CSVFile = fopen(filename, "r");
-
     if (CSVFile == NULL){
-        printf("ที่อยู่ %p\n", CSVFile);
+        //printf("ที่อยู่ %p\n", CSVFile);
         printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
     }
     else{
@@ -81,7 +88,7 @@ int ReadCSV (){
             printf("|");
             printf("\n");
         }
-
+        print_symbol(125, '=');
         fclose(CSVFile);
     }
     return 1;
@@ -109,7 +116,6 @@ int main(){
             switch (menu){
                 case 1: 
                     ReadCSV();
-                    print_symbol(125, '=');
                     break;
                 case 2:
                     char filename[1024];
