@@ -77,6 +77,8 @@ int ReadCSV (){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
 
+    print_symbol(44, '-');
+
     int choice = 0;
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
     scanf("%d", &choice);
@@ -85,20 +87,19 @@ int ReadCSV (){
     }
     else{
         strcpy(filename, filelist[choice - 1]);
-        
+
         char path[1024] = "csvfile\\";
         strcat(path, filename);
-        printf("%s", path);
         FILE *CSVFile = fopen(path, "r");
-        
+
         if (CSVFile == NULL){
             //printf("ที่อยู่ %p\n", CSVFile);
             printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
         }
         else{
             //printf("File %p\n", CSVFile);
-            printf("เปิดไฟล์สำเร็จ\n");
-        
+            printf("เปิดไฟล์ %s สำเร็จ\n", filename);
+
             if (fgets(buffer, sizeof(buffer), CSVFile) != NULL){
                 char *header_token = strtok(buffer, ",\n");
                 while (header_token != NULL){
