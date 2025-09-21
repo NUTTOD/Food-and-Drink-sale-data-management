@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 
 void print_symbol(int length, char symbol){
     for (int i = 0; i < length; i++){
@@ -35,6 +36,21 @@ int SaveCSV (char *filename){
 }
 
 int ReadCSV (){
+    WIN32_FIND_DATA findData;
+    HANDLE hFind;
+    hFind = FindFirstFile("csvfile/*.*", &findData);
+
+    if (hFind == INVALID_HANDLE_VALUE){
+        printf("ไม่เจอ path หรือ error");
+        return 1;
+    }
+    else{
+        while (FindNextFile(hFind, &findData) != 0){
+            printf("- %s\n", findData.cFileName);
+        }
+        FindClose(hFind);
+    }
+
     char buffer [1024];
     char filename [] = "csvfile/Food-and-Drink-sale-data-management.csv";
     FILE *CSVFile = fopen(filename, "r");
@@ -97,7 +113,7 @@ int main(){
                     break;
                 case 2:
                     char filename[1024];
-                    printf("โปรดระบุชื่อไฟล์ที่ต้องการ : ");
+                    printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
                     scanf("%s", &filename);
                     SaveCSV(filename);
                     break;
