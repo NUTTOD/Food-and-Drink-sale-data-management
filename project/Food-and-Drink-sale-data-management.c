@@ -21,16 +21,27 @@ int SaveCSV (char *filename){
     if (checkFile != NULL){
         printf("มีไฟล์ชื่อนี้อยู่แล้ว");
         fclose(checkFile);
+        return 0;
     }
     else{
         FILE *CSVFile = fopen(path, "a");
         if (CSVFile == NULL){
             printf("ไม่สามารถสร้างไฟล์ได้\n");
+            return 0;
         }
         else{
             printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
             fprintf(CSVFile, "OrderID,ProductName,Quantity,Price\n");
+            int choice = 1;
+            int orderID = 1;
+            do{
+                char name [100];
+                int quatity;
+                int price;
+                printf("ใส่ชื่อรายการที่ %d : ");
+                fgets(name, sizeof(name), stdin);
 
+            }while (choice != 0);
         }
         fclose(CSVFile);
     }
@@ -70,13 +81,10 @@ int ReadCSV (){
         }while (FindNextFile(hFind, &findData) != 0);
         FindClose(hFind);
     }
-
     printf("โปรดเลือกไฟล์ที่ต้องการจะเปิด\n");
-
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
-
     print_symbol(44, '-');
 
     int choice = 0;
@@ -87,19 +95,15 @@ int ReadCSV (){
     }
     else{
         strcpy(filename, filelist[choice - 1]);
-
         char path[1024] = "csvfile\\";
         strcat(path, filename);
         FILE *CSVFile = fopen(path, "r");
 
         if (CSVFile == NULL){
-            //printf("ที่อยู่ %p\n", CSVFile);
             printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
         }
         else{
-            //printf("File %p\n", CSVFile);
             printf("เปิดไฟล์ %s สำเร็จ\n", filename);
-
             if (fgets(buffer, sizeof(buffer), CSVFile) != NULL){
                 char *header_token = strtok(buffer, ",\n");
                 while (header_token != NULL){
@@ -122,18 +126,15 @@ int ReadCSV (){
             fclose(CSVFile);
         }   
     }
-
     for (int i = 0; i < filecount; i++){
         free(filelist[i]);
     }
-
     return 1;
 }
 
 int main(){
     int menu = 0;
     int scan_check;
-
     while(menu != 7){
         printf("     ระบบจัดการข้อมูลการซื้ออาหารและเครื่องดื่ม\n");
         printf("------------โปรดเลือกฟังก์ชันที่ต้องการ------------\n");
@@ -156,7 +157,7 @@ int main(){
                 case 2:
                     char filename[1024];
                     printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
-                    scanf("%s", filename);
+                    scanf("%s", filename);              
                     SaveCSV(filename);
                     break;
                 case 3:
@@ -186,8 +187,6 @@ int main(){
             print_symbol(44, '-');
             print_symbol(3, '\n');
         }
-
     }
-
     return 0;
 }
