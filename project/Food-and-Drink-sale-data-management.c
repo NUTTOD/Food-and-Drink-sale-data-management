@@ -37,9 +37,27 @@ int SaveCSV (char *filename){
             do{
                 char name [100];
                 int quatity;
-                int price;
-                printf("ใส่ชื่อรายการที่ %d : ");
+                float price;
+
+                printf("ใส่ชื่อรายการที่ %d : ", orderID);
                 fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+
+                printf("ใส่จำนวน: ");
+                scanf("%d", &quatity);
+
+                printf("ใส่ราคา: ");
+                scanf("%.2f", &price);
+
+                fprintf(CSVFile, "000%d,%s,%d,%.2f\n", orderID, name, quatity, price);
+
+                printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
+                scanf("%d", &choice);
+
+                getchar();
+
+                orderID++;
+                printf("\n");
 
             }while (choice != 0);
         }
@@ -147,6 +165,7 @@ int main(){
         printf("7.ออกจากโปรแกรม");
         printf("เลือกฟังก์ชันโดยตัวเลข 1-7 : ");
         scan_check = scanf("%d", &menu);
+        getchar();
 
         if (scan_check == 1){
             print_symbol(44, '-');
