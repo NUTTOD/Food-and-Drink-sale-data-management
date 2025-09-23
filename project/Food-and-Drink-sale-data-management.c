@@ -47,7 +47,7 @@ int SaveCSV (char *filename){
                 scanf("%d", &quatity);
 
                 printf("ใส่ราคา: ");
-                scanf("%.2f", &price);
+                scanf("%d", &price);
 
                 fprintf(CSVFile, "000%d,%s,%d,%.2f\n", orderID, name, quatity, price);
 
@@ -173,12 +173,14 @@ int main(){
                 case 1: 
                     ReadCSV();
                     break;
-                case 2:
+                case 2:{
                     char filename[1024];
                     printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
-                    scanf("%s", filename);              
+                    scanf("%s", filename);
+                    getchar();            
                     SaveCSV(filename);
                     break;
+                }
                 case 3:
                     break;
                 case 4:
