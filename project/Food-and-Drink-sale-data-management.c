@@ -37,7 +37,7 @@ int SaveCSV (char *filename){
             do{
                 char name [100];
                 int quatity;
-                float price;
+                int price;
 
                 printf("ใส่ชื่อรายการที่ %d : ", orderID);
                 fgets(name, sizeof(name), stdin);
@@ -49,7 +49,7 @@ int SaveCSV (char *filename){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "000%d,%s,%d,%.2f\n", orderID, name, quatity, price);
+                fprintf(CSVFile, "000%d,%s,%d,%d\n", orderID, name, quatity, price);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
@@ -162,7 +162,7 @@ int main(){
         printf("4.ค้นหาข้อมูลการซื้อ\n");
         printf("5.อัพเดตข้อมูลการซื้อ\n");
         printf("6.ลบข้อมูลการซื้อ\n");
-        printf("7.ออกจากโปรแกรม");
+        printf("7.ออกจากโปรแกรม\n");
         printf("เลือกฟังก์ชันโดยตัวเลข 1-7 : ");
         scan_check = scanf("%d", &menu);
         getchar();
