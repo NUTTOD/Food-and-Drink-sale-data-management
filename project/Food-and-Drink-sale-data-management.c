@@ -41,10 +41,35 @@ int AddCSV (){
             }
         }
     }while(FindNextFile(hFind, &findData) != 0);
+    
+    int choice = 0;
     FindClose(hFind);
     printf("โปรดเลือกไฟล์ที่ต้องการเพิ่มข้อมูล\n");
     for (int i = 0; i < filecount; i++){
-        printf("1.%s\n", filelist[i]);
+        printf("%d.%s\n", i + 1, filelist[i]);
+    }
+    printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
+    scanf("%d", &choice);
+    if (choice < 1 || choice > filecount){
+        printf("ตัวเลือกไม่ถูกต้อง\n");
+    }
+    else{
+        strcpy(filename, filelist[choice - 1]);
+        char path[1024] = "csvfile\\";
+        strcat(path, filename);
+        FILE *CSVFile = fopen(path, "a");
+
+        if (CSVFile == NULL){
+            printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
+        }
+        else{
+            fprintf(CSVFile, "Test print\n");
+        }
+    fclose(CSVFile);
+    }
+
+    for (int i = 0; i < filecount; i++){
+        free(filelist[i]);
     }
     return 1;
 }
