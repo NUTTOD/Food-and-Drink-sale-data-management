@@ -63,7 +63,35 @@ int AddCSV (){
             printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
         }
         else{
-            fprintf(CSVFile, "Test print\n");
+            //fprintf(CSVFile, "Test print\n");
+            int choice = 1;
+            int orderID = 1;
+            do{
+                char name [100];
+                int quatity;
+                int price;
+
+                printf("ใส่ชื่อรายการที่ %d : ", orderID);
+                fgets(name, sizeof(name), stdin);
+                name[strcspn(name, "\n")] = 0;
+
+                printf("ใส่จำนวน: ");
+                scanf("%d", &quatity);
+
+                printf("ใส่ราคา: ");
+                scanf("%d", &price);
+
+                fprintf(CSVFile, "000%d,%s,%d,%d\n", orderID, name, quatity, price);
+
+                printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
+                scanf("%d", &choice);
+
+                getchar();
+
+                orderID++;
+                printf("\n");
+
+            }while (choice != 0);
         }
     fclose(CSVFile);
     }
