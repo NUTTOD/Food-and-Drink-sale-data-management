@@ -12,6 +12,43 @@ void print_symbol(int length, char symbol){
     putchar('\n');
 }
 
+int AddCSV (){
+    WIN32_FIND_DATA findData;
+    HANDLE hFind;
+    hFind = FindFirstFile("csvfile\\*.*", &findData);
+
+    char filename [1024];
+    char *filelist[MAXFILE];
+    int filecount = 0;
+
+    if (hFind == INVALID_HANDLE_VALUE){
+        printf("ไม่เจอ path หรือ error");
+        return 1;
+    }
+
+    do{
+        if (strcmp(findData.cFileName, ".") != 0 && strcmp(findData.cFileName, "..") != 0){
+            if (filecount < MAXFILE){
+                size_t len = strlen(findData.cFileName) + 1;
+                filelist[filecount] = (char *)malloc(len);
+
+                if (filelist[filecount] != NULL){
+                    strcpy(filelist[filecount], findData.cFileName);
+                    filecount ++;
+                }else{
+                    printf("Memory allocation failded\n");
+                }
+            }
+        }
+    }while(FindNextFile(hFind, &findData) != 0);
+    FindClose(hFind);
+    printf("โปรดเลือกไฟล์ที่ต้องการเพิ่มข้อมูล\n");
+    for (int i = 0; i < filecount; i++){
+        printf("1.%s\n", filelist[i]);
+    }
+    return 1;
+}
+
 int SaveCSV (char *filename){
     char path[1024] = "csvfile\\";
     strcat(path, filename);
@@ -182,6 +219,7 @@ int main(){
                     break;
                 }
                 case 3:
+                    AddCSV();
                     break;
                 case 4:
                     break;
