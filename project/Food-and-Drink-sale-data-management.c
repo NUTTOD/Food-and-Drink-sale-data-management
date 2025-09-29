@@ -12,6 +12,27 @@ void print_symbol(int length, char symbol){
     putchar('\n');
 }
 
+int getLastorderID(char *filepath){
+    FILE *CSVFile = fopen(filepath, "r");
+    char line[1024];
+    int lastOrderID = 0;
+    int currentID = 0;
+
+    if (CSVFile == NULL){
+        printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
+        return 0;
+    }
+    else{
+        while (fgets(line, sizeof(line), CSVFile) != NULL){
+            if (sscanf(line, "%d,", &currentID) == 1){
+                lastOrderID = currentID;
+            }
+        }
+        fclose(CSVFile);
+    }
+    return lastOrderID;
+}
+
 int AddCSV (){
     WIN32_FIND_DATA findData;
     HANDLE hFind;
@@ -50,6 +71,7 @@ int AddCSV (){
     }
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
     scanf("%d", &choice);
+    getchar();
     if (choice < 1 || choice > filecount){
         printf("ตัวเลือกไม่ถูกต้อง\n");
     }
@@ -63,9 +85,8 @@ int AddCSV (){
             printf("เปิดไฟล์ไม่สำเร็จหรือไม่พบไฟล์\n");
         }
         else{
-            //fprintf(CSVFile, "Test print\n");
             int choice = 1;
-            int orderID = 1;
+            int orderID = getLastorderID(path) + 1;
             do{
                 char name [100];
                 int quatity;
@@ -81,7 +102,7 @@ int AddCSV (){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "000%d,%s,%d,%d\n", orderID, name, quatity, price);
+                fprintf(CSVFile, "00%d,%s,%d,%d\n", orderID, name, quatity, price);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
