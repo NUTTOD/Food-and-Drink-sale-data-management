@@ -1,1 +1,0 @@
-This project create for final by Nutthasit Chauychoocherd 68010378 Section 34.
