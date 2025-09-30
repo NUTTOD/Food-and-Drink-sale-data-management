@@ -69,28 +69,42 @@ int SearchCSV(){
     int filecount = 0;
     findFilelist(filelist, &filecount);
 
-    int choice = 0;
+    int filechoice = 0;
     printf("โปรดเลือกไฟล์ที่ต้องการค้นหาข้อมูล\n");
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
-    scanf("%d", &choice);
+    int scanResult = scanf("%d", &filechoice);
     getchar();
-    if (choice < 1 || choice > filecount){
+
+    if (scanResult != 1 || filechoice < 1 || filechoice > filecount){
         printf("ตัวเลือกไม่ถูกต้อง\n");
     }
     else{
-        char searchKeyword[1024];
-        int scanCheck;
+        int searchType = 0;
 
         printf("โปรดเลือกประเภทการค้นหา\n");
         printf("1.ค้นหาด้วย ID\n2.ค้นหาด้วยชื่อ\n");
         printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
-        scanCheck = scanf("%d", &searchKeyword);
-        if (scanCheck == 1){
-            if (scanCheck < 1 || scanCheck > 2){
+        scanResult = scanf("%d", &searchType);
+        getchar();
+        if (scanResult != 1 || (searchType != 1 && searchType != 2)){
+            if (searchType < 1 || searchType > 2){
                 printf("ตัวเลือกผิดพลาด\n");
+                if (scanResult != 1) {
+                    while (getchar() != '\n');
+                }
+            }
+            else{
+                char path[1024] = "csvfile\\";
+                strcat(path, filelist[filechoice - 1]);
+                switch (searchType){
+                    case 1:
+                        break;
+                    case 2:
+                        break;
+                }
             }
         }
         else{
@@ -154,7 +168,7 @@ int AddCSV (){
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
                 print_symbol(44, '-');
-                
+
                 getchar();
 
                 orderID++;
@@ -186,7 +200,6 @@ int SaveCSV (char *filename){
         FILE *CSVFile = fopen(path, "a");
         if (CSVFile == NULL){
             printf("ไม่สามารถสร้างไฟล์ได้\n");
-            return 0;
         }
         else{
             printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
@@ -327,6 +340,7 @@ int main(){
                     break;
                 case 7:
                     printf("จบการทำงานของโปรแกรม\n");
+                    print_symbol(44, '-');
                     break;
                 case 8:
                     break;
