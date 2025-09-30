@@ -33,14 +33,12 @@ int getLastorderID(char *filepath){
     return lastOrderID;
 }
 
-int AddCSV (){
+char findFilelist(char *filelist[], int *filecount){
     WIN32_FIND_DATA findData;
     HANDLE hFind;
     hFind = FindFirstFile("csvfile\\*.*", &findData);
 
     char filename [1024];
-    char *filelist[MAXFILE];
-    int filecount = 0;
 
     if (hFind == INVALID_HANDLE_VALUE){
         printf("ไม่เจอ path หรือ error");
@@ -49,22 +47,29 @@ int AddCSV (){
 
     do{
         if (strcmp(findData.cFileName, ".") != 0 && strcmp(findData.cFileName, "..") != 0){
-            if (filecount < MAXFILE){
+            if (*filecount < MAXFILE){
                 size_t len = strlen(findData.cFileName) + 1;
-                filelist[filecount] = (char *)malloc(len);
+                filelist[*filecount] = (char *)malloc(len);
 
-                if (filelist[filecount] != NULL){
-                    strcpy(filelist[filecount], findData.cFileName);
-                    filecount ++;
+                if (filelist[*filecount] != NULL){
+                    strcpy(filelist[*filecount], findData.cFileName);
+                    (*filecount) ++;
                 }else{
                     printf("Memory allocation failded\n");
                 }
             }
         }
     }while(FindNextFile(hFind, &findData) != 0);
-    
-    int choice = 0;
     FindClose(hFind);
+}
+
+int AddCSV (){
+    char filename [1024];
+    char *filelist[MAXFILE];
+    int filecount = 0;
+    findFilelist(filelist, &filecount);
+
+    int choice = 0;
     printf("โปรดเลือกไฟล์ที่ต้องการเพิ่มข้อมูล\n");
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
@@ -102,7 +107,7 @@ int AddCSV (){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "00%d,%s,%d,%d\n", orderID, name, quatity, price);
+                fprintf(CSVFile, "%04d,%s,%d,%d\n", orderID, name, quatity, price);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
@@ -178,38 +183,12 @@ int SaveCSV (char *filename){
 }
 
 int ReadCSV (){
-    WIN32_FIND_DATA findData;
-    HANDLE hFind;
-    hFind = FindFirstFile("csvfile\\*.*", &findData);
-
-    char buffer [1024];
+    char buffer[1024];
     char filename [1024];
     char *filelist[MAXFILE];
     int filecount = 0;
+    findFilelist(filelist, &filecount);
 
-    if (hFind == INVALID_HANDLE_VALUE){
-        printf("ไม่เจอ path หรือ error");
-        return 1;
-    }
-    else{
-        do{
-            if (strcmp(findData.cFileName, ".") != 0 && strcmp(findData.cFileName, "..") != 0){
-                if (filecount < MAXFILE){
-                    size_t len = strlen(findData.cFileName) + 1;
-                    filelist[filecount] = (char *)malloc(len);
-
-                    if (filelist[filecount] != NULL){
-                        strcpy(filelist[filecount], findData.cFileName);
-                        filecount++;
-                    }
-                    else{
-                        printf("Memory allocation failded\n");
-                    }
-                }
-            }
-        }while (FindNextFile(hFind, &findData) != 0);
-        FindClose(hFind);
-    }
     printf("โปรดเลือกไฟล์ที่ต้องการจะเปิด\n");
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
@@ -274,6 +253,8 @@ int main(){
         printf("5.อัพเดตข้อมูลการซื้อ\n");
         printf("6.ลบข้อมูลการซื้อ\n");
         printf("7.ออกจากโปรแกรม\n");
+        printf("8.Unit Test\n");
+        printf("9.End-to-End Test\n");
         printf("เลือกฟังก์ชันโดยตัวเลข 1-7 : ");
         scan_check = scanf("%d", &menu);
         getchar();
@@ -284,18 +265,29 @@ int main(){
                 case 1: 
                     ReadCSV();
                     break;
-                case 2:{
+                case 2:
                     char filename[1024];
                     printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
                     scanf("%s", filename);
                     getchar();            
                     SaveCSV(filename);
                     break;
-                }
                 case 3:
                     AddCSV();
                     break;
                 case 4:
+                    char *filelist[MAXFILE];
+                    int filecount = 0;
+                    findFilelist(filelist, &filecount);
+                    
+                    for (int i = 0; i < filecount; i++){
+                        printf("%d.%s\n", i + 1, filelist[i]);
+                    }
+
+                    for (int i = 0; i < filecount; i ++){
+                        free(filelist[i]);
+                    }
+
                     break;
                 case 5:
                     break;
@@ -303,6 +295,10 @@ int main(){
                     break;
                 case 7:
                     printf("จบการทำงานของโปรแกรม\n");
+                    break;
+                case 8:
+                    break;
+                case 9:
                     break;
                 default:
                     printf("โปรดเลือกตัวเลือกที่ 1-7\n");
