@@ -63,6 +63,47 @@ char findFilelist(char *filelist[], int *filecount){
     FindClose(hFind);
 }
 
+int SearchCSV(){
+    char filename [1024];
+    char *filelist[MAXFILE];
+    int filecount = 0;
+    findFilelist(filelist, &filecount);
+
+    int choice = 0;
+    printf("โปรดเลือกไฟล์ที่ต้องการค้นหาข้อมูล\n");
+    for (int i = 0; i < filecount; i++){
+        printf("%d.%s\n", i + 1, filelist[i]);
+    }
+    printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
+    scanf("%d", &choice);
+    getchar();
+    if (choice < 1 || choice > filecount){
+        printf("ตัวเลือกไม่ถูกต้อง\n");
+    }
+    else{
+        char searchKeyword[1024];
+        int scanCheck;
+
+        printf("โปรดเลือกประเภทการค้นหา\n");
+        printf("1.ค้นหาด้วย ID\n2.ค้นหาด้วยชื่อ\n");
+        printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
+        scanCheck = scanf("%d", &searchKeyword);
+        if (scanCheck == 1){
+            if (scanCheck < 1 || scanCheck > 2){
+                printf("ตัวเลือกผิดพลาด\n");
+            }
+        }
+        else{
+            print_symbol(44, '-');
+            printf("ตัวเลือกผิดพลาด\n");
+            while(getchar() != '\n');
+            print_symbol(44, '-');
+            print_symbol(3, '\n');
+        }
+    }
+    return 1;
+}
+
 int AddCSV (){
     char filename [1024];
     char *filelist[MAXFILE];
@@ -74,6 +115,7 @@ int AddCSV (){
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
+    print_symbol(44, '-');
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
     scanf("%d", &choice);
     getchar();
@@ -111,7 +153,8 @@ int AddCSV (){
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
-
+                print_symbol(44, '-');
+                
                 getchar();
 
                 orderID++;
@@ -165,7 +208,7 @@ int SaveCSV (char *filename){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "000%d,%s,%d,%d\n", orderID, name, quatity, price);
+                fprintf(CSVFile, "%04d,%s,%d,%d\n", orderID, name, quatity, price);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
@@ -255,7 +298,7 @@ int main(){
         printf("7.ออกจากโปรแกรม\n");
         printf("8.Unit Test\n");
         printf("9.End-to-End Test\n");
-        printf("เลือกฟังก์ชันโดยตัวเลข 1-7 : ");
+        printf("เลือกฟังก์ชันโดยตัวเลข 1-9 : ");
         scan_check = scanf("%d", &menu);
         getchar();
 
@@ -276,18 +319,7 @@ int main(){
                     AddCSV();
                     break;
                 case 4:
-                    char *filelist[MAXFILE];
-                    int filecount = 0;
-                    findFilelist(filelist, &filecount);
-                    
-                    for (int i = 0; i < filecount; i++){
-                        printf("%d.%s\n", i + 1, filelist[i]);
-                    }
-
-                    for (int i = 0; i < filecount; i ++){
-                        free(filelist[i]);
-                    }
-
+                    SearchCSV();
                     break;
                 case 5:
                     break;
@@ -301,7 +333,7 @@ int main(){
                 case 9:
                     break;
                 default:
-                    printf("โปรดเลือกตัวเลือกที่ 1-7\n");
+                    printf("โปรดเลือกตัวเลือกที่ 1-9\n");
                     menu = 0;
                     print_symbol(44, '-');
                     break;
@@ -310,7 +342,7 @@ int main(){
         }
         else{
             print_symbol(44, '-');
-            printf("โปรดเลือกตัวเลือกที่ 1-7\n");
+            printf("โปรดเลือกตัวเลือกที่ 1-9\n");
             while(getchar() != '\n');
             menu = 0;
             print_symbol(44, '-');
