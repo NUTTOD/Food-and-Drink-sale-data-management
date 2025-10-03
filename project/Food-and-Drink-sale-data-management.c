@@ -203,13 +203,15 @@ int SaveCSV (char *filename){
         }
         else{
             printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
-            fprintf(CSVFile, "OrderID,ProductName,Quantity,Price\n");
+            fprintf(CSVFile, "OrderID,ProductName,Quantity,Price,Type\n");
             int choice = 1;
             int orderID = 1;
             do{
                 char name [100];
                 int quatity;
                 int price;
+                int productTypechoice = 0;
+                char productType [10];
 
                 printf("ใส่ชื่อรายการที่ %d : ", orderID);
                 fgets(name, sizeof(name), stdin);
@@ -221,7 +223,20 @@ int SaveCSV (char *filename){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "%04d,%s,%d,%d\n", orderID, name, quatity, price);
+                printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
+                scanf("%d", &productTypechoice);
+
+                if (productTypechoice == 1){
+                    strcpy(productType, "Food");
+                }
+                else if (productTypechoice == 2){
+                    strcpy(productType, "Drink");
+                }
+                else{
+                    strcpy(productType, "None");
+                }
+
+                fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
@@ -275,7 +290,7 @@ int ReadCSV (){
                     header_token = strtok(NULL, ",\n");
                 }
                 printf("\n");
-                print_symbol(125, '=');
+                print_symbol(155, '=');
             }
             while (fgets(buffer, sizeof(buffer), CSVFile) != NULL){
                 char *token = strtok(buffer, ",\n");
@@ -286,7 +301,7 @@ int ReadCSV (){
                 printf("|");
                 printf("\n");
             }
-            print_symbol(125, '=');
+            print_symbol(155, '=');
             fclose(CSVFile);
         }   
     }
@@ -321,13 +336,13 @@ int main(){
                 case 1: 
                     ReadCSV();
                     break;
-                case 2:
+                case 2:{
                     char filename[1024];
                     printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
                     scanf("%s", filename);
                     getchar();            
                     SaveCSV(filename);
-                    break;
+                    break;}
                 case 3:
                     AddCSV();
                     break;
