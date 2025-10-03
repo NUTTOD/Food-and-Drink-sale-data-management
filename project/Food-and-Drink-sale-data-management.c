@@ -89,19 +89,38 @@ int SearchCSV(){
         printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
         scanResult = scanf("%d", &searchType);
         getchar();
-        if (scanResult != 1 || (searchType != 1 && searchType != 2)){
-            if (searchType < 1 || searchType > 2){
+        if (scanResult == 1){
+            if (searchType != 1 && searchType != 2){
                 printf("ตัวเลือกผิดพลาด\n");
                 if (scanResult != 1) {
                     while (getchar() != '\n');
                 }
             }
             else{
+                char line[1024];
+                int found = 0;
                 char path[1024] = "csvfile\\";
                 strcat(path, filelist[filechoice - 1]);
+
+                FILE *CSVFile = fopen(path, "r");
                 switch (searchType){
-                    case 1:
-                        break;
+                    case 1:{
+                        int searchID;
+                        printf("โปรดใส่หมายเลข ID ที่ต้องการค้นหา : ");
+                        scanf("%d", &searchID);
+                        getchar();
+
+                        while (fgets(line, sizeof(line), CSVFile) != NULL){
+                            int currentId;
+                            if (sscanf(line, "%d,", &currentId) == 1) {
+                                if (currentId == searchID) {
+                                    printf("พบข้อมูล:\n%s", line);
+                                    found = 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                     case 2:
                         break;
                 }
@@ -152,6 +171,8 @@ int AddCSV (){
                 char name [100];
                 int quatity;
                 int price;
+                int productTypechoice = 0;
+                char productType [10];
 
                 printf("ใส่ชื่อรายการที่ %d : ", orderID);
                 fgets(name, sizeof(name), stdin);
@@ -163,7 +184,20 @@ int AddCSV (){
                 printf("ใส่ราคา: ");
                 scanf("%d", &price);
 
-                fprintf(CSVFile, "%04d,%s,%d,%d\n", orderID, name, quatity, price);
+                printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
+                scanf("%d", &productTypechoice);
+
+                if (productTypechoice == 1){
+                    strcpy(productType, "Food");
+                }
+                else if (productTypechoice == 2){
+                    strcpy(productType, "Drink");
+                }
+                else{
+                    strcpy(productType, "None");
+                }
+
+                fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
 
                 printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
                 scanf("%d", &choice);
