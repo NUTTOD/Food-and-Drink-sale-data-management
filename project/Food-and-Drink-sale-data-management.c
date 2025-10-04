@@ -97,32 +97,49 @@ int SearchCSV(){
                 }
             }
             else{
-                char line[1024];
-                int found = 0;
                 char path[1024] = "csvfile\\";
                 strcat(path, filelist[filechoice - 1]);
 
                 FILE *CSVFile = fopen(path, "r");
                 switch (searchType){
                     case 1:{
+                        int found = 0;
                         int searchID;
+                        char searchIDLine[1024];
                         printf("โปรดใส่หมายเลข ID ที่ต้องการค้นหา : ");
                         scanf("%d", &searchID);
                         getchar();
-
-                        while (fgets(line, sizeof(line), CSVFile) != NULL){
+                        while (fgets(searchIDLine, sizeof(searchIDLine), CSVFile) != NULL){
                             int currentId;
-                            if (sscanf(line, "%d,", &currentId) == 1) {
+                            if (sscanf(searchIDLine, "%d,", &currentId) == 1) {
                                 if (currentId == searchID) {
-                                    printf("พบข้อมูล:\n%s", line);
+                                    printf("พบข้อมูล:\n%s", searchIDLine);
                                     found = 1;
                                     break;
                                 }
                             }
                         }
-                    }
-                    case 2:
                         break;
+                    }
+                    case 2:{
+                        int found = 0;
+                        char searchName[1024];
+                        char searchNameLine[1024];
+                        printf("โปรดใส่ ชื่อ ที่ต้องการค้นหา : ");
+                        scanf("%s", searchName);
+                        getchar();
+                        while (fgets(searchNameLine, sizeof(searchNameLine), CSVFile) != NULL){
+                            if (strstr(searchNameLine, searchName) != NULL){
+                                printf("%s", searchNameLine);
+                                found = 1;
+                            }
+                        }
+                    }
+                    fclose(CSVFile);
+                    for (int i = 0; i < filecount; i++){
+                        free(filelist[i]);
+                    }
+                    break;
                 }
             }
         }
