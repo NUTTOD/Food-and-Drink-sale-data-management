@@ -113,7 +113,16 @@ int SearchCSV(){
                             int currentId;
                             if (sscanf(searchIDLine, "%d,", &currentId) == 1) {
                                 if (currentId == searchID) {
-                                    printf("พบข้อมูล:\n%s", searchIDLine);
+                                    char *token = strtok(searchIDLine, ",\n");
+                                    print_symbol(44, '-');
+                                    printf("Found product ID : %d\n", currentId);
+                                    print_symbol(155, '=');
+                                    printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
+                                    while (token != NULL){
+                                        printf("|%-30s", token);
+                                        token = strtok(NULL, ",\n");
+                                    }
+                                    printf("|"); 
                                     found = 1;
                                     break;
                                 }
