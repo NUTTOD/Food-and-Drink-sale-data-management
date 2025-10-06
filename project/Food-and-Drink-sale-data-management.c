@@ -5,6 +5,8 @@
 
 #define MAXFILE 50
 
+int ReadCSV();
+
 void print_symbol(int length, char symbol){
     for (int i = 0; i < length; i++){
         putchar(symbol);
@@ -63,6 +65,24 @@ char findFilelist(char *filelist[], int *filecount){
     FindClose(hFind);
 }
 
+int UpdateCSV(){
+    int orderIDchoice = 0;
+    ReadCSV();
+    printf("โปรดเลือกสินค้าที่ต้องการแก้ไข้ข้อมูลจาก OrderID : ");
+    int scancheck = scanf("%d", &orderIDchoice);
+
+    if (scancheck == 1){
+        printf("sdasd\n");
+    }
+    else{
+        printf("ตัวเลือกไม่ถูกต้อง\n");
+        while (getchar() != '\n');
+        print_symbol(44, '-');
+    }
+
+    return 1;
+}
+
 int SearchCSV(){
     char filename [1024];
     char *filelist[MAXFILE];
@@ -76,12 +96,13 @@ int SearchCSV(){
     }
 
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
-    int scanResult = scanf("%d", &filechoice);
+    int scancheck = scanf("%d", &filechoice);
     print_symbol(44,'-');
     getchar();
 
-    if (scanResult != 1 || filechoice < 1 || filechoice > filecount){
+    if (scancheck != 1 || filechoice < 1 || filechoice > filecount){
         printf("ตัวเลือกไม่ถูกต้อง\n");
+        while (getchar() != '\n');
     }
     else{
         int searchType = 0;
@@ -89,13 +110,12 @@ int SearchCSV(){
         printf("โปรดเลือกประเภทการค้นหา\n");
         printf("1.ค้นหาด้วย ID\n2.ค้นหาด้วยชื่อ\n");
         printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
-        scanResult = scanf("%d", &searchType);
-        //print_symbol(44,'-');
+        scancheck = scanf("%d", &searchType);
         getchar();
-        if (scanResult == 1){
+        if (scancheck == 1){
             if (searchType != 1 && searchType != 2){
                 printf("ตัวเลือกผิดพลาด\n");
-                if (scanResult != 1) {
+                if (scancheck != 1) {
                     while (getchar() != '\n');
                 }
             }
@@ -434,6 +454,7 @@ int main(){
                     SearchCSV();
                     break;
                 case 5:
+                    UpdateCSV();
                     break;
                 case 6:
                     break;
