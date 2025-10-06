@@ -74,8 +74,10 @@ int SearchCSV(){
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
+
     printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
     int scanResult = scanf("%d", &filechoice);
+    print_symbol(44,'-');
     getchar();
 
     if (scanResult != 1 || filechoice < 1 || filechoice > filecount){
@@ -88,6 +90,7 @@ int SearchCSV(){
         printf("1.ค้นหาด้วย ID\n2.ค้นหาด้วยชื่อ\n");
         printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
         scanResult = scanf("%d", &searchType);
+        //print_symbol(44,'-');
         getchar();
         if (scanResult == 1){
             if (searchType != 1 && searchType != 2){
@@ -106,27 +109,37 @@ int SearchCSV(){
                         int found = 0;
                         int searchID;
                         char searchIDLine[1024];
+                        char Linecopy[1024];
+
                         printf("โปรดใส่หมายเลข ID ที่ต้องการค้นหา : ");
                         scanf("%d", &searchID);
                         getchar();
                         while (fgets(searchIDLine, sizeof(searchIDLine), CSVFile) != NULL){
                             int currentId;
+                            strcpy(Linecopy, searchIDLine);
                             if (sscanf(searchIDLine, "%d,", &currentId) == 1) {
                                 if (currentId == searchID) {
-                                    char *token = strtok(searchIDLine, ",\n");
+                                    char *token = strtok(Linecopy, ",\n");
                                     print_symbol(44, '-');
-                                    printf("Found product ID : %d\n", currentId);
+                                    printf("พบสินค้ารหัส : %d\n", currentId);
                                     print_symbol(155, '=');
                                     printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
                                     while (token != NULL){
-                                        printf("|%-30s", token);
+                                        printf("%-30s ", token);
                                         token = strtok(NULL, ",\n");
                                     }
-                                    printf("|"); 
+                                    printf("|\n");
+                                    print_symbol(155, '=');
+
                                     found = 1;
                                     break;
                                 }
                             }
+                        }
+                        if (found == 0){
+                            print_symbol(44, '-');
+                            printf("ไม่พบรหัสสินค้าที่ค้นหา\n");
+                            print_symbol(44, '-');
                         }
                         break;
                     }
@@ -134,15 +147,26 @@ int SearchCSV(){
                         int found = 0;
                         char searchName[1024];
                         char searchNameLine[1024];
-                        printf("โปรดใส่ ชื่อ ที่ต้องการค้นหา : ");
+                        printf("โปรดใส่ \"ชื่อ\" \"หรือประเภท\" ที่ต้องการค้นหา : ");
                         scanf("%s", searchName);
                         getchar();
+                        print_symbol(155, '=');
+                        printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
+                        int productCount = 0;
                         while (fgets(searchNameLine, sizeof(searchNameLine), CSVFile) != NULL){
                             if (strstr(searchNameLine, searchName) != NULL){
-                                printf("%s", searchNameLine);
+                                char *token = strtok(searchNameLine, ",\n");
+                                productCount++;
+                                while (token != NULL){
+                                    printf("|%-30s", token);
+                                    token = strtok(NULL, ",\n");
+                                }
+                                printf("|\n"); 
                                 found = 1;
                             }
                         }
+                        print_symbol(155, '=');
+                        printf("เจอสินค้า %d อย่างจากคำค้นหา %s\n", productCount, searchName);
                     }
                     fclose(CSVFile);
                     for (int i = 0; i < filecount; i++){
