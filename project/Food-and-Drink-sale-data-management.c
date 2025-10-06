@@ -5,7 +5,18 @@
 
 #define MAXFILE 50
 
+void print_symbol(int length, char symbol);
+int getLastorderID(char *filepath);
+char findFilelist(char *filelist[], int *filecount);
+int SelectCSVFile(char *selected_path, int buffer_size);
+void DisplayCSVContent(const char *filepath);
+
 int ReadCSV();
+int SaveCSV();
+int AddCSV();
+int SearchCSV();
+int UpdateCSV();
+int DeleteCSV();
 
 void print_symbol(int length, char symbol){
     for (int i = 0; i < length; i++){
@@ -65,6 +76,44 @@ char findFilelist(char *filelist[], int *filecount){
     FindClose(hFind);
 }
 
+int SelectCSVFile(char *selectedPath, int buffer_size){
+    char *filelist[MAXFILE];
+    int filecount = 0;
+    findFilelist(filelist, &filecount);
+
+    if (filecount == 0){
+        printf("ไม่พบไฟล์ CSV ในโฟลเดอร์ csvfile\n");
+    }
+
+    printf("โปรดเลือกไฟล์ที่ต้องการค้นหาข้อมูล\n");
+    for (int i = 0; i < filecount; i++){
+        printf("%d.%s\n", i + 1, filelist[i]);
+    }
+    print_symbol(44,'-');
+
+    int filechoice = 0;
+    printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
+    int scancheck = scanf("%d", &filechoice);
+    getchar();
+
+    int success = 0;
+    if (scancheck != 1 || filechoice < 1 || filechoice > filecount){
+        printf("ตัวเลือกไม่ถูกต้อง\n");
+        while(getchar() != '\n')
+        success = 0;
+    }
+    else{
+        snprintf(selectedPath, buffer_size, "csvfile\\%s", filelist[filechoice - 1]);
+        success = 1;
+    }
+
+    for (int i = 0; i < filecount; i++){
+        free(filelist[i]);
+    }
+    
+    return success;
+}
+
 int UpdateCSV(){
     int orderIDchoice = 0;
     ReadCSV();
@@ -72,7 +121,7 @@ int UpdateCSV(){
     int scancheck = scanf("%d", &orderIDchoice);
 
     if (scancheck == 1){
-        printf("sdasd\n");
+        printf("%d\n", orderIDchoice);
     }
     else{
         printf("ตัวเลือกไม่ถูกต้อง\n");
@@ -483,5 +532,5 @@ int main(){
             print_symbol(3, '\n');
         }
     }
-    return 0;
+    return 1;
 }
