@@ -7,7 +7,7 @@
 
 void print_symbol(int length, char symbol);
 int getLastorderID(char *filepath);
-char findFilelist(char *filelist[], int *filecount);
+void findFilelist(char *filelist[], int *filecount);
 int SelectCSVFile(char *selected_path, int buffer_size);
 void DisplayCSVContent(const char *filepath);
 
@@ -46,7 +46,7 @@ int getLastorderID(char *filepath){
     return lastOrderID;
 }
 
-char findFilelist(char *filelist[], int *filecount){
+void findFilelist(char *filelist[], int *filecount){
     WIN32_FIND_DATA findData;
     HANDLE hFind;
     hFind = FindFirstFile("csvfile\\*.*", &findData);
@@ -55,7 +55,6 @@ char findFilelist(char *filelist[], int *filecount){
 
     if (hFind == INVALID_HANDLE_VALUE){
         printf("ไม่เจอ path หรือ error");
-        return 1;
     }
 
     do{
@@ -256,7 +255,7 @@ int UpdateCSV(){
                 printf("\n------------ กำลังแก้ไข้ ID : %d ------------\n", currentID);
 
                 char productName[1024];
-                int quatity;
+                int quantity;
                 int price;
                 int productTypechoice;
                 char productType[10];
@@ -266,7 +265,7 @@ int UpdateCSV(){
                 productName[strcspn(productName, "\n")] = 0;
 
                 printf("ใส่จำนวนใหม่ : ");
-                if (scanf("%d", &quatity) != 1){
+                if (scanf("%d", &quantity) != 1){
                     print_symbol(44, '-');
                     printf("ตัวเลือกไม่ถูกต้อง\n");
                     print_symbol(44, '-');
@@ -298,7 +297,7 @@ int UpdateCSV(){
                 else if (productTypechoice == 2) strcpy(productType, "Drink");
                 else strcpy(productType, "None");
 
-                fprintf(tempFile, "%04d,%s,%d,%d,%s\n", currentID, productName, quatity, price, productType);
+                fprintf(tempFile, "%04d,%s,%d,%d,%s\n", currentID, productName, quantity, price, productType);
             }
             else {
                 fputs(lineCopy, tempFile);
@@ -364,12 +363,12 @@ int SearchCSV(){
                 fgets(line, sizeof(line), CSVFile);
 
                 while (fgets(line, sizeof(line), CSVFile) != NULL){
-                    int cuurentID;
-                    if (sscanf(line, "%d,", &cuurentID) == 1){
-                        if (cuurentID == searchID) {
+                    int currentID;
+                    if (sscanf(line, "%d,", &currentID) == 1){
+                        if (currentID == searchID) {
                             char *token = strtok(line, ",\n");
                             print_symbol(44, '-');
-                            printf("พบสินค้ารหัส : %d\n", cuurentID);
+                            printf("พบสินค้ารหัส : %d\n", currentID);
                             print_symbol(155, '=');
                             printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
                             while (token != NULL){
@@ -437,7 +436,7 @@ int AddCSV (){
         int orderID = getLastorderID(selectedPath) + 1;
         do{
             char name [100];
-            int quatity;
+            int quantity;
             int price;
             int productTypechoice = 0;
             char productType [10];
@@ -447,7 +446,7 @@ int AddCSV (){
             name[strcspn(name, "\n")] = 0;
 
             printf("ใส่จำนวน: ");
-            if (scanf("%d", &quatity) != 1){
+            if (scanf("%d", &quantity) != 1){
                 print_symbol(44, '-');
                 printf("ตัวเลือกไม่ถูกต้อง\n");
                 print_symbol(44, '-');
@@ -479,7 +478,7 @@ int AddCSV (){
             else if (productTypechoice == 2) strcpy(productType, "Drink");
             else strcpy(productType, "None");
 
-            fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
+            fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quantity, price, productType);
 
             printf("\nต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
             scanf("%d", &choice);
@@ -527,7 +526,7 @@ int SaveCSV (){
     int orderID = 1;
     do{
         char name [100];
-        int quatity;
+        int quantity;
         int price;
         int productTypechoice = 0;
         char productType [10];
@@ -537,7 +536,7 @@ int SaveCSV (){
         name[strcspn(name, "\n")] = 0;
 
         printf("ใส่จำนวนใหม่ : ");
-        if (scanf("%d", &quatity) != 1){
+        if (scanf("%d", &quantity) != 1){
             print_symbol(44, '-');
             printf("ตัวเลือกไม่ถูกต้อง\n");
             print_symbol(44, '-');
@@ -570,7 +569,7 @@ int SaveCSV (){
         else if (productTypechoice == 2) strcpy(productType, "Drink");
         else strcpy(productType, "None");
 
-        fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
+        fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quantity, price, productType);
         
         printf("ต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่) : ");
         scanf("%d", &choice);
@@ -663,5 +662,5 @@ int main(){
             print_symbol(3, '\n');
         }
     }
-    return 1;
+    return 0;
 }
