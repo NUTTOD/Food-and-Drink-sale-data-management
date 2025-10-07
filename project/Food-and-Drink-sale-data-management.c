@@ -132,126 +132,134 @@ int UpdateCSV(){
     return 1;
 }
 
+void DisplayCSV(const char *filepath){
+    FILE *CSVFile = fopen(filepath, "r");
+    if (CSVFile == NULL){
+        printf("เปิดไฟล %s ไม่สำเร็จ\n", filepath);
+        return ;
+    }
+
+    char buffer[1024];
+    if (fgets(buffer, sizeof(buffer), CSVFile) != NULL) {
+        char *header_token = strtok(buffer, ",\n");
+        while (header_token != NULL) {
+            printf("%-31s", header_token);
+            header_token = strtok(NULL, ",\n");
+        }
+        printf("\n");
+        print_symbol(155, '=');
+    }
+
+    while (fgets(buffer, sizeof(buffer), CSVFile) != NULL) {
+        char *token = strtok(buffer, ",\n");
+        printf("|");
+        while (token != NULL) {
+            printf("%-30s|", token);
+            token = strtok(NULL, ",\n");
+        }
+        printf("\n");
+    }
+    print_symbol(155, '=');
+    fclose(CSVFile);
+}
+
 int SearchCSV(){
-    char filename [1024];
-    char *filelist[MAXFILE];
-    int filecount = 0;
-    findFilelist(filelist, &filecount);
-
-    int filechoice = 0;
-    printf("โปรดเลือกไฟล์ที่ต้องการค้นหาข้อมูล\n");
-    for (int i = 0; i < filecount; i++){
-        printf("%d.%s\n", i + 1, filelist[i]);
-    }
-
-    printf("เลือกโดยใช้ตัวเลขตามหัวข้อ : ");
-    int scancheck = scanf("%d", &filechoice);
-    print_symbol(44,'-');
-    getchar();
-
-    if (scancheck != 1 || filechoice < 1 || filechoice > filecount){
-        printf("ตัวเลือกไม่ถูกต้อง\n");
-        while (getchar() != '\n');
-    }
-    else{
+    char selectedPath[1024];
+    if (SelectCSVFile(selectedPath, sizeof(selectedPath))){
         int searchType = 0;
-
         printf("โปรดเลือกประเภทการค้นหา\n");
         printf("1.ค้นหาด้วย ID\n2.ค้นหาด้วยชื่อ\n");
         printf("โปรดเลือกตัวเลือกตามหัวข้อ : ");
-        scancheck = scanf("%d", &searchType);
+        int scancheck = scanf("%d", &searchType);
         getchar();
-        if (scancheck == 1){
-            if (searchType != 1 && searchType != 2){
-                printf("ตัวเลือกผิดพลาด\n");
-                if (scancheck != 1) {
-                    while (getchar() != '\n');
-                }
-            }
-            else{
-                char path[1024] = "csvfile\\";
-                strcat(path, filelist[filechoice - 1]);
 
-                FILE *CSVFile = fopen(path, "r");
-                switch (searchType){
-                    case 1:{
-                        int found = 0;
-                        int searchID;
-                        char searchIDLine[1024];
-                        char Linecopy[1024];
-
-                        printf("โปรดใส่หมายเลข ID ที่ต้องการค้นหา : ");
-                        scanf("%d", &searchID);
-                        getchar();
-                        while (fgets(searchIDLine, sizeof(searchIDLine), CSVFile) != NULL){
-                            int currentId;
-                            strcpy(Linecopy, searchIDLine);
-                            if (sscanf(searchIDLine, "%d,", &currentId) == 1) {
-                                if (currentId == searchID) {
-                                    char *token = strtok(Linecopy, ",\n");
-                                    print_symbol(44, '-');
-                                    printf("พบสินค้ารหัส : %d\n", currentId);
-                                    print_symbol(155, '=');
-                                    printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
-                                    while (token != NULL){
-                                        printf("%-30s ", token);
-                                        token = strtok(NULL, ",\n");
-                                    }
-                                    printf("|\n");
-                                    print_symbol(155, '=');
-
-                                    found = 1;
-                                    break;
-                                }
-                            }
-                        }
-                        if (found == 0){
-                            print_symbol(44, '-');
-                            printf("ไม่พบรหัสสินค้าที่ค้นหา\n");
-                            print_symbol(44, '-');
-                        }
-                        break;
-                    }
-                    case 2:{
-                        int found = 0;
-                        char searchName[1024];
-                        char searchNameLine[1024];
-                        printf("โปรดใส่ \"ชื่อ\" \"หรือประเภท\" ที่ต้องการค้นหา : ");
-                        scanf("%s", searchName);
-                        getchar();
-                        print_symbol(155, '=');
-                        printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
-                        int productCount = 0;
-                        while (fgets(searchNameLine, sizeof(searchNameLine), CSVFile) != NULL){
-                            if (strstr(searchNameLine, searchName) != NULL){
-                                char *token = strtok(searchNameLine, ",\n");
-                                productCount++;
-                                while (token != NULL){
-                                    printf("|%-30s", token);
-                                    token = strtok(NULL, ",\n");
-                                }
-                                printf("|\n"); 
-                                found = 1;
-                            }
-                        }
-                        print_symbol(155, '=');
-                        printf("เจอสินค้า %d อย่างจากคำค้นหา %s\n", productCount, searchName);
-                    }
-                    fclose(CSVFile);
-                    for (int i = 0; i < filecount; i++){
-                        free(filelist[i]);
-                    }
-                    break;
-                }
-            }
-        }
-        else{
-            print_symbol(44, '-');
-            printf("ตัวเลือกผิดพลาด\n");
+        if (scancheck != 1 || (searchType != 1 && searchType != 2)){
+            printf("ตัวเลือกไม่ถูกต้อง\n");
             while(getchar() != '\n');
-            print_symbol(44, '-');
-            print_symbol(3, '\n');
+            return 0;
         }
+
+        FILE *CSVFile = fopen(selectedPath, "r");
+        if (CSVFile == NULL){
+            printf("เปิดไฟลไม่สำเร็จ\n");
+            return 0;
+        }
+
+        switch (searchType){
+            case 1 : {
+                print_symbol(44, '-');
+                printf("โปรดใส่หมายเลข ID ที่ต้องการค้นหา : ");
+                int searchID;
+                int scancheck = scanf("%d", &searchID);
+                if (scancheck != 1){
+                    print_symbol(44, '-');
+                    printf("ตัวเลือกไม่ถูกต้อง\n");
+                    while(getchar() != '\n');
+                    return 0;
+                }
+                
+                char line[1024];
+                int found = 0;
+                fgets(line, sizeof(line), CSVFile);
+
+                while (fgets(line, sizeof(line), CSVFile) != NULL){
+                    int cuurentID;
+                    if (sscanf(line, "%d,", &cuurentID) == 1){
+                        if (cuurentID == searchID) {
+                            char *token = strtok(line, ",\n");
+                            print_symbol(44, '-');
+                            printf("พบสินค้ารหัส : %d\n", cuurentID);
+                            print_symbol(155, '=');
+                            printf("%-31s%-31s%-31s%-31s%-31s|\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
+                            while (token != NULL){
+                                printf("%-30s ", token);
+                                token = strtok(NULL, ",\n");
+                            }
+                            printf("|\n");
+                            print_symbol(155, '=');
+                            found = 1;
+                            break;
+                        }
+                    }
+                }
+                if (found != 1){
+                    printf("ไม่พบรหัสสินค้าที่ค้นหา\n");
+                }
+                break;
+            }
+            case 2: {
+                char searchName[1024];
+                printf("โปรดใส่ \"ชื่อ\" \"หรือประเภท\" ที่ต้องการค้นหา : ");
+                fgets(searchName, sizeof(searchName), stdin);
+                searchName[strcspn(searchName, "\n")] = 0;
+
+                char line[1024];
+                int found = 0;
+                int productCount = 0;
+                print_symbol(44, '-');
+                printf("\n\n\n%-31s%-31s%-31s%-31s%-31s\n", "OrderID", "ProductName", "Quantity", "Price", "Type");
+                print_symbol(155, '=');
+
+                fgets(line, sizeof(line), CSVFile);
+                while (fgets(line, sizeof(line), CSVFile) != NULL){
+                    if (strstr(line, searchName) != NULL){
+                        char *token = strtok(line, ",\n");
+                        printf("|");
+                        while (token != NULL){
+                            printf("%-30s|", token);
+                            token = strtok(NULL, ",\n");
+                        }
+                        printf("\n");
+                        productCount++;
+                        found = 1;
+                    }
+                }
+                print_symbol(155, '=');
+                printf("เจอสินค้า %d อย่างจากคำค้นหา %s\n", productCount, searchName);
+                break;
+            }
+        }
+        fclose(CSVFile);
     }
     return 1;
 }
