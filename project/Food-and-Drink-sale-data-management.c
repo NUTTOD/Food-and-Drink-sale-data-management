@@ -99,7 +99,7 @@ int SelectCSVFile(char *selectedPath, int buffer_size){
     int success = 0;
     if (scancheck != 1 || filechoice < 1 || filechoice > filecount){
         printf("ตัวเลือกไม่ถูกต้อง\n");
-        while(getchar() != '\n')
+        while(getchar() != '\n');
         success = 0;
     }
     else{
@@ -511,6 +511,9 @@ int main(){
     int menu = 0;
     int scan_check;
     while(menu != 7){
+        CreateDirectory("csvfile", NULL);
+        CreateDirectory("tempfile", NULL);
+        
         printf("     ระบบจัดการข้อมูลการซื้ออาหารและเครื่องดื่ม\n");
         printf("------------ โปรดเลือกฟังก์ชันที่ต้องการ ------------\n");
         printf("1.อ่านข้อมูลการซื้อ\n");
