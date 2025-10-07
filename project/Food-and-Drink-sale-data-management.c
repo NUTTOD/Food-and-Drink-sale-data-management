@@ -474,7 +474,7 @@ int AddCSV (){
                 return 0;
             }
             getchar();
-            
+
             if (productTypechoice == 1) strcpy(productType, "Food");
             else if (productTypechoice == 2) strcpy(productType, "Drink");
             else strcpy(productType, "None");
@@ -495,69 +495,91 @@ int AddCSV (){
     return 1;
 }
 
-int SaveCSV (char *filename){
-    char path[1024] = "csvfile\\";
-    strcat(path, filename);
-    strcat(path, ".csv");
+int SaveCSV (){
+    char filename[1024];
+    printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง (ไม่ต้องใส่นามสกุล .csv) : ");
+    fgets(filename, sizeof(filename), stdin);
+    filename[strcspn(filename, "\n")] = 0;
+
+    if(strlen(filename) == 0) {
+        printf("ชื่อไฟล์ห้ามว่างเปล่า\n");
+        return 0;
+    }
+
+    char path[1024];
+    snprintf(path, sizeof(path), "csvfile\\%s.csv", filename);
 
     FILE *checkFile = fopen(path, "r");
     if (checkFile != NULL){
-        printf("มีไฟล์ชื่อนี้อยู่แล้ว");
+        printf("มีไฟล์ชื่อนี้อยู่แล้ว\n");
         fclose(checkFile);
         return 0;
     }
 
-    FILE *CSVFile = fopen(path, "a");
+    FILE *CSVFile = fopen(path, "w");
     if (CSVFile == NULL){
         printf("ไม่สามารถสร้างไฟล์ได้\n");
     }
+    printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
+    fprintf(CSVFile, "OrderID,ProductName,Quantity,Price,Type\n");
+    print_symbol(44, '-');
+    int choice = 1;
+    int orderID = 1;
+    do{
+        char name [100];
+        int quatity;
+        int price;
+        int productTypechoice = 0;
+        char productType [10];
 
-    else{
-        printf("สร้างไฟล์ %s.csv สำเร็จ\n", filename);
-        fprintf(CSVFile, "OrderID,ProductName,Quantity,Price,Type\n");
-        print_symbol(44, '-');
-        int choice = 1;
-        int orderID = 1;
+        printf("ใส่ชื่อรายการที่ %d : ", orderID);
+        fgets(name, sizeof(name), stdin);
+        name[strcspn(name, "\n")] = 0;
 
-        do{
-            char name [100];
-            int quatity;
-            int price;
-            int productTypechoice = 0;
-            char productType [10];
-
-            printf("ใส่ชื่อรายการที่ %d : ", orderID);
-            fgets(name, sizeof(name), stdin);
-            name[strcspn(name, "\n")] = 0;
-            printf("ใส่จำนวน: ");
-            scanf("%d", &quatity);
-            printf("ใส่ราคา: ");
-            scanf("%d", &price);
+        printf("ใส่จำนวนใหม่ : ");
+        if (scanf("%d", &quatity) != 1){
             print_symbol(44, '-');
-            printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
-            scanf("%d", &productTypechoice);
+            printf("ตัวเลือกไม่ถูกต้อง\n");
             print_symbol(44, '-');
+            while(getchar() != '\n');
+            return 0;
+        }
 
-            if (productTypechoice == 1){
-                strcpy(productType, "Food");
-            }
-            else if (productTypechoice == 2){
-                strcpy(productType, "Drink");
-            }
-            else{
-                strcpy(productType, "None");
-            }
+        printf("ใส่ราคาใหม่ : ");
+        if (scanf("%d", &price) != 1){
+            print_symbol(44, '-');
+            printf("ตัวเลือกไม่ถูกต้อง\n");
+            print_symbol(44, '-');
+            while(getchar() != '\n');
+            return 0;
+        }
 
-            fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
-            printf("ต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่): ");
-            scanf("%d", &choice);
-            getchar();
-
-            orderID++;
-        }while (choice != 0);
         print_symbol(44, '-');
-        fclose(CSVFile);
-    }
+        printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
+        int scanResult = scanf("%d", &productTypechoice);
+        if (scanResult != 1 || productTypechoice < 1 || productTypechoice > 2){
+            print_symbol(44, '-');
+            printf("ตัวเลือกไม่ถูกต้อง\n");
+            print_symbol(44, '-');
+            while(getchar() != '\n');
+            return 0;
+        }
+        getchar();
+
+        if (productTypechoice == 1) strcpy(productType, "Food");
+        else if (productTypechoice == 2) strcpy(productType, "Drink");
+        else strcpy(productType, "None");
+
+        fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
+        
+        printf("ต้องการเพิ่มรายการต้อไปหรือไม่ (1 = ใช่, 0 = ไม่ใช่) : ");
+        scanf("%d", &choice);
+        getchar();
+        orderID++;
+    }while (choice != 0);
+    print_symbol(44, '-');
+
+    fclose(CSVFile);
     return 1;
 }
 
@@ -597,13 +619,9 @@ int main(){
                 case 1: 
                     ReadCSV();
                     break;
-                case 2:{
-                    char filename[1024];
-                    printf("โปรดระบุชื่อไฟล์ที่ต้องการสร้าง : ");
-                    scanf("%s", filename);
-                    getchar();            
-                    SaveCSV(filename);
-                    break;}
+                case 2:        
+                    SaveCSV();
+                    break;
                 case 3:
                     AddCSV();
                     break;
@@ -626,9 +644,13 @@ int main(){
                     break;
                 default:
                     printf("โปรดเลือกตัวเลือกที่ 1-9\n");
-                    menu = 0;
                     print_symbol(44, '-');
                     break;
+            }
+            if (menu != 7) {
+                printf("\nกด Enter เพื่อกลับไปที่เมนูหลัก...");
+                getchar();
+                print_symbol(44, '-');
             }
             print_symbol(3, '\n');
         }
