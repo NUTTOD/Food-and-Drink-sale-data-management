@@ -145,6 +145,73 @@ void DisplayCSV(const char *filepath){
     fclose(CSVFile);
 }
 
+int DeleteCSV(){
+        char originalPath[1024];
+    if (SelectCSVFile(originalPath, sizeof(originalPath))){
+        DisplayCSV(originalPath);
+
+        int orderIDchoice = 0;
+        printf("โปรดระบุ ID ของรายการที่ต้องการแก้ไข: ");
+        int scancheck = scanf("%d", &orderIDchoice);
+        if(scancheck != 1){
+            printf("ตัวเลือกไม่ถูกต้อง\n");
+            while (getchar() != '\n');
+            print_symbol(44, '-');
+            return 0;
+        }
+        getchar();
+        
+        char tempPath[1024] = "tempfile\\temp_update.tmp";
+        FILE *originalFile = fopen(originalPath, "r");
+        FILE *tempFile = fopen(tempPath, "w");
+
+        if (originalFile == NULL || tempFile == NULL){
+            printf("เกิดข้อพิดพลาดในการเปิดไฟล์เพื่ออัพเดต!\n");
+            if (originalFile) fclose(originalFile);
+            if (tempFile) fclose(tempFile);
+            return 0;
+        }
+
+        char line[1024];
+        int found = 0;
+
+        if (fgets(line, sizeof(line), originalFile) != NULL){
+            fputs(line, tempFile);
+        }
+
+        while(fgets(line, sizeof(line), originalFile) != NULL){
+            int currentID;
+            char lineCopy[1024];
+            strcpy(lineCopy, line);
+
+            if (sscanf(line, "%d,", &currentID) == 1 && currentID == orderIDchoice){
+                found = 1;
+                continue;
+            }
+            else {
+                fputs(lineCopy, tempFile);
+            }
+        }
+        fclose(originalFile);
+        fclose(tempFile);
+
+        if (found) {
+            remove(originalPath);
+            rename(tempPath, originalPath);
+            print_symbol(44, '-');
+            printf("ลบข้อมูลของ ID : %d เรียบร้อย\n", orderIDchoice);
+            print_symbol(44, '-');
+        }
+        else {
+            remove(tempPath);
+            print_symbol(44, '-');
+            printf("ไม่พบรายการที่มี ID : %d\n", orderIDchoice);
+            print_symbol(44, '-');
+        }
+    }
+    return 1;
+}
+
 int UpdateCSV(){
     char originalPath[1024];
     if (SelectCSVFile(originalPath, sizeof(originalPath))){
@@ -552,8 +619,11 @@ int main(){
                     UpdateCSV();
                     break;
                 case 6:
+                    DeleteCSV();
                     break;
                 case 7:
+                    printf("จบการทำงานของโปรแกรม\n");
+                    print_symbol(44, '-');
                     break;
                 case 8:
                     break;
