@@ -1,9 +1,9 @@
 OrderID,ProductName,Quantity,Price,Type
-0001,Kaprow Moo,2,50,Food
-0002,Khao Pad Kai,1,45,Food
+0001,Kawpad kai,20,40,Food
+0002,Khao Pad Kung,10,55,Food
 0003,Pad Thai Goong,1,60,Food
 0004,Tom Yum Goong,1,80,Food
-0005,Green Curry Chicken,2,70,Food
+0005,Yellow Curry Beef,10,90,Food
 0006,Iced Coffee,3,35,Drink
 0007,Thai Tea,2,30,Drink
 0008,Fried Chicken,4,40,Food

@@ -85,7 +85,7 @@ int SelectCSVFile(char *selectedPath, int buffer_size){
         printf("ไม่พบไฟล์ CSV ในโฟลเดอร์ csvfile\n");
     }
 
-    printf("โปรดเลือกไฟล์ที่ต้องการค้นหาข้อมูล\n");
+    printf("โปรดเลือกไฟล์ที่ต้องการ\n");
     for (int i = 0; i < filecount; i++){
         printf("%d.%s\n", i + 1, filelist[i]);
     }
@@ -152,7 +152,7 @@ int UpdateCSV(){
 
         int orderIDchoice = 0;
         printf("โปรดระบุ ID ของรายการที่ต้องการแก้ไข: ");
-        int scancheck = scanf("%d", orderIDchoice);
+        int scancheck = scanf("%d", &orderIDchoice);
         if(scancheck != 1){
             printf("ตัวเลือกไม่ถูกต้อง\n");
             while (getchar() != '\n');
@@ -160,9 +160,98 @@ int UpdateCSV(){
             return 0;
         }
         getchar();
-
-
         
+        char tempPath[1024] = "tempfile\\temp_update.tmp";
+        FILE *originalFile = fopen(originalPath, "r");
+        FILE *tempFile = fopen(tempPath, "w");
+
+        if (originalFile == NULL || tempFile == NULL){
+            printf("เกิดข้อพิดพลาดในการเปิดไฟล์เพื่ออัพเดต!\n");
+            if (originalFile) fclose(originalFile);
+            if (tempFile) fclose(tempFile);
+            return 0;
+        }
+
+        char line[1024];
+        int found = 0;
+
+        if (fgets(line, sizeof(line), originalFile) != NULL){
+            fputs(line, tempFile);
+        }
+
+        while(fgets(line, sizeof(line), originalFile) != NULL){
+            int currentID;
+            char lineCopy[1024];
+            strcpy(lineCopy, line);
+
+            if (sscanf(line, "%d,", &currentID) == 1 && currentID == orderIDchoice){
+                found = 1;
+                printf("\n------------ กำลังแก้ไข้ ID : %d ------------\n", currentID);
+
+                char productName[1024];
+                int quatity;
+                int price;
+                int productTypechoice;
+                char productType[10];
+
+                printf("ใส่ชื่อรายการใหม่ : ");
+                fgets(productName, sizeof(productName), stdin);
+                productName[strcspn(productName, "\n")] = 0;
+
+                printf("ใส่จำนวนใหม่ : ");
+                if (scanf("%d", &quatity) != 1){
+                    print_symbol(44, '-');
+                    printf("ตัวเลือกไม่ถูกต้อง\n");
+                    print_symbol(44, '-');
+                    while(getchar() != '\n');
+                    return 0;
+                }
+
+                printf("ใส่ราคาใหม่ : ");
+                if (scanf("%d", &price) != 1){
+                    print_symbol(44, '-');
+                    printf("ตัวเลือกไม่ถูกต้อง\n");
+                    print_symbol(44, '-');
+                    while(getchar() != '\n');
+                    return 0;
+                }
+
+                printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกประเภทใหม่ : ");
+                if (scanf("%d", &productTypechoice) != 1){
+                    print_symbol(44, '-');
+                    printf("ตัวเลือกไม่ถูกต้อง\n");
+                    print_symbol(44, '-');
+                    while(getchar() != '\n');
+                    return 0;
+                }
+                getchar();
+
+                if (productTypechoice == 1) strcpy(productType, "Food");
+                else if (productTypechoice == 2) strcpy(productType, "Drink");
+                else strcpy(productType, "None");
+
+                fprintf(tempFile, "%04d,%s,%d,%d,%s\n", currentID, productName, quatity, price, productType);
+            }
+            else {
+                fputs(lineCopy, tempFile);
+            }
+        }
+        fclose(originalFile);
+        fclose(tempFile);
+
+        if (found) {
+            remove(originalPath);
+            rename(tempPath, originalPath);
+            print_symbol(44, '-');
+            printf("อัปเดตข้อมูล ID : %d เรียบร้อย\n", orderIDchoice);
+            print_symbol(44, '-');
+        }
+        else {
+            remove(tempPath);
+            print_symbol(44, '-');
+            printf("ไม่พบรายการที่มี ID : %d\n", orderIDchoice);
+            print_symbol(44, '-');
+        }
     }
     return 1;
 }
@@ -318,15 +407,9 @@ int AddCSV (){
                 printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
                 scanf("%d", &productTypechoice);
 
-                if (productTypechoice == 1){
-                    strcpy(productType, "Food");
-                }
-                else if (productTypechoice == 2){
-                    strcpy(productType, "Drink");
-                }
-                else{
-                    strcpy(productType, "None");
-                }
+                if (productTypechoice == 1) strcpy(productType, "Food");
+                else if (productTypechoice == 2) strcpy(productType, "Drink");
+                else strcpy(productType, "None");
 
                 fprintf(CSVFile, "%04d,%s,%d,%d,%s\n", orderID, name, quatity, price, productType);
 
@@ -429,7 +512,7 @@ int main(){
     int scan_check;
     while(menu != 7){
         printf("     ระบบจัดการข้อมูลการซื้ออาหารและเครื่องดื่ม\n");
-        printf("------------โปรดเลือกฟังก์ชันที่ต้องการ------------\n");
+        printf("------------ โปรดเลือกฟังก์ชันที่ต้องการ ------------\n");
         printf("1.อ่านข้อมูลการซื้อ\n");
         printf("2.บันทึกข้อมูลการซื้อ\n");
         printf("3.เพิ่มข้อมูลการซื้อ\n");
@@ -468,8 +551,6 @@ int main(){
                 case 6:
                     break;
                 case 7:
-                    printf("จบการทำงานของโปรแกรม\n");
-                    print_symbol(44, '-');
                     break;
                 case 8:
                     break;
