@@ -356,13 +356,24 @@ int UpdateCSV() {
         productName[strcspn(productName, "\n")] = 0;
 
         printf("ใส่จำนวนใหม่ : ");
-        if (scanf("%d", &quantity) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while (getchar() != '\n'); return 0; }
+        if (scanf("%d", &quantity) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while (getchar() != '\n'); 
+            return 0; 
+        }
 
         printf("ใส่ราคาใหม่ : ");
-        if (scanf("%d", &price) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while (getchar() != '\n'); return 0; }
+        if (scanf("%d", &price) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while (getchar() != '\n'); 
+            return 0; 
+        }
 
         printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
-        if (scanf("%d", &productTypechoice) != 1 || productTypechoice < 1 || productTypechoice > 2) { printf("ตัวเลือกไม่ถูกต้อง\n"); while (getchar() != '\n'); return 0; }
+        if (scanf("%d", &productTypechoice) != 1 || productTypechoice < 1 || productTypechoice > 2) { 
+            printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while (getchar() != '\n'); 
+            return 0; 
+        }
+        
         getchar();
         if (productTypechoice == 1) strcpy(productType, "Food");
         else strcpy(productType, "Drink");
@@ -484,14 +495,26 @@ int AddCSV() {
             name[strcspn(name, "\n")] = 0;
 
             printf("ใส่จำนวน: ");
-            if (scanf("%d", &quantity) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0; }
+            if (scanf("%d", &quantity) != 1) {
+                printf("ตัวเลือกไม่ถูกต้อง\n"); 
+                while(getchar() != '\n');
+                fclose(CSVFile); 
+                return 0; 
+            }
 
             printf("ใส่ราคา: ");
-            if (scanf("%d", &price) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0; }
+            if (scanf("%d", &price) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); 
+                while(getchar() != '\n'); 
+                fclose(CSVFile); 
+                return 0; 
+            }
 
             printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
             if (scanf("%d", &productTypechoice) != 1 || productTypechoice < 1 || productTypechoice > 2) {
-                printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0;
+                printf("ตัวเลือกไม่ถูกต้อง\n"); 
+                while(getchar() != '\n'); 
+                fclose(CSVFile);
+                return 0;
             }
             getchar();
             if (productTypechoice == 1) strcpy(productType, "Food");
@@ -543,14 +566,27 @@ int SaveCSV() {
         name[strcspn(name, "\n")] = 0;
 
         printf("ใส่จำนวน: ");
-        if (scanf("%d", &quantity) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0; }
+        if (scanf("%d", &quantity) != 1) { 
+            printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while(getchar() != '\n'); 
+            fclose(CSVFile); 
+            return 0; 
+        }
 
         printf("ใส่ราคา: ");
-        if (scanf("%d", &price) != 1) { printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0; }
+        if (scanf("%d", &price) != 1) { 
+            printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while(getchar() != '\n'); 
+            fclose(CSVFile); 
+            return 0; 
+        }
 
         printf("ประเภท\n1.Food\n2.Drink\nโปรดเลือกด้วตามหัวข้อ : ");
         if (scanf("%d", &productTypechoice) != 1 || productTypechoice < 1 || productTypechoice > 2) {
-            printf("ตัวเลือกไม่ถูกต้อง\n"); while(getchar() != '\n'); return 0;
+            printf("ตัวเลือกไม่ถูกต้อง\n"); 
+            while(getchar() != '\n'); 
+            fclose(CSVFile); 
+            return 0;
         }
 
         getchar();
